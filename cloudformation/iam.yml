@@ -1,26 +1,25 @@
-AWSTemplateFormatVersion: '2010-09-09'
+AWSTemplateFormatVersion: "2010-09-09"
 Description: roles and policies
 
 Resources:
-
   ECSTaskExecutionRole:
     Type: AWS::IAM::Role
     Properties:
-      AssumeRolePolicyDocument: 
+      AssumeRolePolicyDocument:
         Statement:
-        - Effect: Allow
-          Principal:
-            Service: [ecs-tasks.amazonaws.com]
-          Action: ['sts:AssumeRole'] 
+          - Effect: Allow
+            Principal:
+              Service: [ecs-tasks.amazonaws.com]
+            Action: ["sts:AssumeRole"]
       Policies:
-        - PolicyName: "ECSTaskExecutionRolePolicy" 
-          PolicyDocument: 
+        - PolicyName: "ECSTaskExecutionRolePolicy"
+          PolicyDocument:
             Statement:
-            - Effect: Allow
-              Action:
-                - 'logs:CreateLogStream'
-                - 'logs:PutLogEvents'
-              Resource: '*' 
+              - Effect: Allow
+                Action:
+                  - "logs:CreateLogStream"
+                  - "logs:PutLogEvents"
+                Resource: "*"
 
   AutoScalingRole:
     Type: AWS::IAM::Role
@@ -30,21 +29,19 @@ Resources:
           - Effect: Allow
             Principal:
               Service: ecs-tasks.amazonaws.com
-            Action: 'sts:AssumeRole'
+            Action: "sts:AssumeRole"
       ManagedPolicyArns:
-        - 'arn:aws:iam::aws:policy/service-role/AmazonEC2ContainerServiceAutoscaleRole'
-
+        - "arn:aws:iam::aws:policy/service-role/AmazonEC2ContainerServiceAutoscaleRole"
 
 Outputs:
-
   ECSTaskExecutionRole:
     Description: ECS Task Execution Role
-    Value: !GetAtt 'ECSTaskExecutionRole.Arn'
+    Value: !GetAtt "ECSTaskExecutionRole.Arn"
     Export:
-      Name: 'ECSTaskExecutionRole'
+      Name: "ECSTaskExecutionRole"
 
   ECSAutoScalingRole:
     Description: ECS AutoScaling Role
-    Value: !GetAtt 'AutoScalingRole.Arn'
+    Value: !GetAtt "AutoScalingRole.Arn"
     Export:
-      Name: 'ECSAutoScalingRole'
+      Name: "ECSAutoScalingRole"

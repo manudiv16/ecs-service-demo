@@ -1,8 +1,7 @@
-AWSTemplateFormatVersion: '2010-09-09'
+AWSTemplateFormatVersion: "2010-09-09"
 Description: container on ecs cluster
 
 Resources:
-  
   Task:
     Type: AWS::ECS::TaskDefinition
     Properties:
@@ -24,16 +23,16 @@ Resources:
           LogConfiguration:
             LogDriver: awslogs
             Options:
-              awslogs-group: 'apps'
+              awslogs-group: "apps"
               awslogs-region: !Ref AWS::Region
-              awslogs-stream-prefix: 'helloWorld-app'
+              awslogs-stream-prefix: "helloWorld-app"
 
   Service:
     Type: AWS::ECS::Service
     Properties:
       ServiceName: HelloWorld-service
       TaskDefinition: !Ref Task
-      Cluster: !ImportValue 'ECSCluster'
+      Cluster: !ImportValue "ECSCluster"
       LaunchType: FARGATE
       DesiredCount: 1
       DeploymentConfiguration:
@@ -57,7 +56,8 @@ Resources:
     Properties:
       MinCapacity: 1
       MaxCapacity: 3
-      ResourceId: !Join ['/', [service, !ImportValue 'ECSCluster', !GetAtt Service.Name]]
+      ResourceId:
+        !Join ["/", [service, !ImportValue "ECSCluster", !GetAtt Service.Name]]
       ScalableDimension: ecs:service:DesiredCount
       ServiceNamespace: ecs
       RoleARN: !ImportValue ECSAutoScalingRole
@@ -74,6 +74,3 @@ Resources:
         ScaleInCooldown: 10
         ScaleOutCooldown: 10
         TargetValue: 50
-
-
-
