@@ -1,0 +1,123 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: container cluster on ECS, loadbalancer, security groups and cloudwatch
+
+Parameters:
+  AcmCertificate:
+    Description: The ARN of certification Manager
+    Type: String
+
+Resources:
+  
+  ECSCluster:
+    Type: AWS::ECS::Cluster
+    Properties:
+      ClusterName: 'HelloWorldApi'
+
+  LoadBalancer:
+    Type: AWS::ElasticLoadBalancingV2::LoadBalancer
+    Properties:
+      Name: ecs-services
+      Subnets:
+        - !ImportValue 'Subnet1'
+        - !ImportValue 'Subnet2'
+      SecurityGroups:
+        - !Ref LoadBalancerSecurityGroup
+
+  LoadBalancerListener:
+    Type: AWS::ElasticLoadBalancingV2::Listener
+    Properties:
+      Port: 80
+      Protocol: HTTP
+      LoadBalancerArn: !Ref LoadBalancer
+      DefaultActions:
+        - RedirectConfig:
+            Host: '#{host}'
+            Path: '/#{path}'
+            Port: '443'
+            Protocol: HTTPS
+            StatusCode: HTTP_301
+          Type: redirect
+
+  LoadBalancerListenerSsl:
+    Type: AWS::ElasticLoadBalancingV2::Listener
+    Properties:
+      Port: 443
+      Protocol: HTTPS
+      LoadBalancerArn: !Ref LoadBalancer
+      DefaultActions:
+        - Type: forward
+          TargetGroupArn: !Ref TargetGroup
+      Certificates:
+        - CertificateArn: !!Ref AcmCertificate
+
+  LoadBalancerSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Security group for loadbalancer to services on ECS
+      VpcId: !ImportValue 'VPC'
+      SecurityGroupIngress:
+        - CidrIp: 0.0.0.0/0
+          IpProtocol: -1
+
+  CloudWatchLogsGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: 'apps'
+      RetentionInDays: 1
+
+  ContainerSecurityGroup:
+    Type: AWS::EC2::SecurityGroup      
+    Properties:
+     VpcId: !ImportValue 'VPC'
+     GroupDescription: Security group for ecs containers
+     SecurityGroupIngress:
+       - SourceSecurityGroupId: !Ref 'LoadBalancerSecurityGroup'
+         IpProtocol: -1
+  
+  TargetGroup:
+    Type: AWS::ElasticLoadBalancingV2::TargetGroup
+    Properties:
+      Name: helloWorldApp-tg
+      VpcId: !ImportValue VPC
+      Port: 80
+      Protocol: HTTP
+      Matcher:
+        HttpCode: 200
+      HealthCheckIntervalSeconds: 10
+      HealthCheckPath: /healthz
+      HealthCheckProtocol: HTTP
+      HealthCheckTimeoutSeconds: 5
+      HealthyThresholdCount: 10
+      TargetType: ip
+
+
+Outputs:
+  
+  TargetGroup:
+    Value: !Ref TargetGroup
+    Export:
+      Name: TargetGroupAppHello
+
+  Cluster:
+    Value: !Ref ECSCluster
+    Export:
+      Name: 'ECSCluster'
+
+  Listener:
+    Description: listener port 443
+    Value: !Ref LoadBalancerListenerSsl
+    Export:
+      Name: 'Listener'
+
+  ContainerSecurityGroup:
+    Description: container security group
+    Value: !Ref ContainerSecurityGroup
+    Export:
+      Name: 'ContainerSecurityGroup'
+
+  LoadBalancerDNS:
+    Description: Domain name for the loadbalancer
+    Value: !GetAtt LoadBalancer.DNSName
+    Export:
+      Name: 'DomainName'
+
