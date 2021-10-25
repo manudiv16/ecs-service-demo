@@ -12,7 +12,7 @@ I exported the two roles to use them later.
 ### App-cluster
 In this file, I centered all the base resources of the application, such as the ECS-Cluster, LoudBalancer with its respective entries, CloudWatch to launch the logs, and a Target Group for the application with a *healthcheck* that is the same path defined in the Dockerfile. 
 I decided to incorporate HTTPS in the application and for this, I configured the listener with port 80 with the default action of sending all the traffic to port 443, which has as default the target group that the application will use.
-To incorporate a certificate I incorporated a parameter called AcmCertificate referring to an Arn of a certificate located in the *certification manager*.
+To integrate the certificate, I incorporated a parameter called AcmCertificate referring to an Arn of a certificate located in the *certification manager*.
 In this section I exposed:
 - The target group to later refer to it in the service and direct the traffic to our application.
 - The Cluster where the service will be located.
