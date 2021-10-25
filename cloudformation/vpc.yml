@@ -1,5 +1,5 @@
 AWSTemplateFormatVersion: "2010-09-09"
-Description: VPC for ecs demo
+Description: Virtual Private Cloud for ECS demo
 
 Resources:
   VPC:
@@ -9,21 +9,21 @@ Resources:
       EnableDnsSupport: true
       EnableDnsHostnames: true
       InstanceTenancy: default
-
+  # eu-central-1a
   Subnet1:
     Type: AWS::EC2::Subnet
     Properties:
       AvailabilityZone: !Select [0, !GetAZs ]
       VpcId: !Ref VPC
-      CidrBlock: !Sub "10.0.0.0/20"
+      CidrBlock: "10.0.0.0/20"
       MapPublicIpOnLaunch: true
-
+  # eu-central-1a
   Subnet2:
     Type: AWS::EC2::Subnet
     Properties:
       AvailabilityZone: !Select [1, !GetAZs ]
       VpcId: !Ref VPC
-      CidrBlock: !Sub "10.0.32.0/20"
+      CidrBlock: "10.0.128.0/20"
       MapPublicIpOnLaunch: true
 
   InternetGateway:

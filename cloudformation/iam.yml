@@ -1,5 +1,5 @@
 AWSTemplateFormatVersion: "2010-09-09"
-Description: roles and policies
+Description: Roles and Policies
 
 Resources:
   ECSTaskExecutionRole:
@@ -17,6 +17,7 @@ Resources:
             Statement:
               - Effect: Allow
                 Action:
+                  # Execution Policy for ECS Task to throw logs
                   - "logs:CreateLogStream"
                   - "logs:PutLogEvents"
                 Resource: "*"

@@ -1,5 +1,5 @@
 AWSTemplateFormatVersion: "2010-09-09"
-Description: container cluster on ECS, loadbalancer, security groups and cloudwatch
+Description: Container cluster on ECS, loadbalancer, security groups and cloudwatch
 
 Parameters:
   AcmCertificate:
@@ -99,12 +99,6 @@ Outputs:
     Value: !Ref ECSCluster
     Export:
       Name: "ECSCluster"
-
-  Listener:
-    Description: listener port 443
-    Value: !Ref LoadBalancerListenerSsl
-    Export:
-      Name: "Listener"
 
   ContainerSecurityGroup:
     Description: container security group

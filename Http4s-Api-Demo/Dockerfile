@@ -8,7 +8,7 @@ COPY . /app
 RUN /ops/sbt/bin/sbt assembly
 
 
-FROM openjdk:11-jre-buster 
+FROM openjdk:17-ea-22-jdk-oracle 
 WORKDIR /app
 RUN groupadd -g 999 appuser && \
 	useradd -r -u 999 -g appuser appuser
