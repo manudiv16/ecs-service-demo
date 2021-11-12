@@ -55,8 +55,23 @@ Resources:
       GroupDescription: Security group for loadbalancer to services on ECS
       VpcId: !ImportValue "VPC"
       SecurityGroupIngress:
-        - CidrIp: 0.0.0.0/0
-          IpProtocol: -1
+        - IpProtocol: tcp
+          CidrIp: 0.0.0.0/0
+          FromPort: 443
+          ToPort: 443
+        - IpProtocol: tcp
+          CidrIp: 0.0.0.0/0
+          FromPort: 80
+          ToPort: 80 
+      SecurityGroupEgress:
+        - IpProtocol: tcp
+          CidrIp: 0.0.0.0/0
+          FromPort: 443
+          ToPort: 443
+        - IpProtocol: tcp
+          CidrIp: 0.0.0.0/0
+          FromPort: 80
+          ToPort: 80 
 
   CloudWatchLogsGroup:
     Type: AWS::Logs::LogGroup
