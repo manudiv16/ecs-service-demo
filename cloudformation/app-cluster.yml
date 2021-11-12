@@ -63,15 +63,7 @@ Resources:
           CidrIp: 0.0.0.0/0
           FromPort: 80
           ToPort: 80 
-      SecurityGroupEgress:
-        - IpProtocol: tcp
-          CidrIp: 0.0.0.0/0
-          FromPort: 443
-          ToPort: 443
-        - IpProtocol: tcp
-          CidrIp: 0.0.0.0/0
-          FromPort: 80
-          ToPort: 80 
+
 
   CloudWatchLogsGroup:
     Type: AWS::Logs::LogGroup
